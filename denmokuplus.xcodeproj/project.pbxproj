@@ -14,6 +14,8 @@
 		10451CC12727FE3A007C47BE /* Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10451CC02727FE3A007C47BE /* Manager.swift */; };
 		10451CC42728095F007C47BE /* RankingType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10451CC32728095F007C47BE /* RankingType.swift */; };
 		10451CC62728454F007C47BE /* Logout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10451CC52728454F007C47BE /* Logout.swift */; };
+		108636CA272C22F40002B24B /* RMCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 108636C9272C22F40002B24B /* RMCommand.swift */; };
+		108636CD272C27650002B24B /* SwiftyUI in Frameworks */ = {isa = PBXBuildFile; productRef = 108636CC272C27650002B24B /* SwiftyUI */; };
 		109FA865272A2F4E00A54F77 /* Latest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 109FA864272A2F4E00A54F77 /* Latest.swift */; };
 		109FA867272A452700A54F77 /* database.gz in Resources */ = {isa = PBXBuildFile; fileRef = 109FA866272A452700A54F77 /* database.gz */; };
 		10AA945727277BBA008F022B /* Gzip in Frameworks */ = {isa = PBXBuildFile; productRef = 10AA945627277BBA008F022B /* Gzip */; };
@@ -62,6 +64,7 @@
 		10451CC02727FE3A007C47BE /* Manager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Manager.swift; sourceTree = "<group>"; };
 		10451CC32728095F007C47BE /* RankingType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankingType.swift; sourceTree = "<group>"; };
 		10451CC52728454F007C47BE /* Logout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logout.swift; sourceTree = "<group>"; };
+		108636C9272C22F40002B24B /* RMCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RMCommand.swift; sourceTree = "<group>"; };
 		109FA864272A2F4E00A54F77 /* Latest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Latest.swift; sourceTree = "<group>"; };
 		109FA866272A452700A54F77 /* database.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = database.gz; sourceTree = "<group>"; };
 		10AA945827277BFF008F022B /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
@@ -93,6 +96,7 @@
 				10F6C62E2726800A00AE4F9C /* RealmSwift in Frameworks */,
 				10AA945727277BBA008F022B /* Gzip in Frameworks */,
 				10F6C6312726808800AE4F9C /* Alamofire in Frameworks */,
+				108636CD272C27650002B24B /* SwiftyUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -128,6 +132,7 @@
 			isa = PBXGroup;
 			children = (
 				10451CC32728095F007C47BE /* RankingType.swift */,
+				108636C9272C22F40002B24B /* RMCommand.swift */,
 			);
 			path = Enum;
 			sourceTree = "<group>";
@@ -255,6 +260,7 @@
 				10F6C6302726808800AE4F9C /* Alamofire */,
 				10F6C633272680C700AE4F9C /* SwiftyJSON */,
 				10AA945627277BBA008F022B /* Gzip */,
+				108636CC272C27650002B24B /* SwiftyUI */,
 			);
 			productName = denmokuplus;
 			productReference = 10EA58CC27267CD800B8B27E /* denmokuplus.app */;
@@ -333,6 +339,7 @@
 				10F6C62F2726808800AE4F9C /* XCRemoteSwiftPackageReference "Alamofire" */,
 				10F6C632272680C700AE4F9C /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
 				10AA945527277BBA008F022B /* XCRemoteSwiftPackageReference "GzipSwift" */,
+				108636CB272C27650002B24B /* XCRemoteSwiftPackageReference "SwiftyUI" */,
 			);
 			productRefGroup = 10EA58CD27267CD800B8B27E /* Products */;
 			projectDirPath = "";
@@ -379,6 +386,7 @@
 			files = (
 				10AA946127278985008F022B /* AppManager.swift in Sources */,
 				10AA94662727A27A008F022B /* SearchView.swift in Sources */,
+				108636CA272C22F40002B24B /* RMCommand.swift in Sources */,
 				109FA865272A2F4E00A54F77 /* Latest.swift in Sources */,
 				10451CBD2727FBCC007C47BE /* Login.swift in Sources */,
 				10451CBB2727E73E007C47BE /* FontStyle.swift in Sources */,
@@ -745,6 +753,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		108636CB272C27650002B24B /* XCRemoteSwiftPackageReference "SwiftyUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/tkgstrator/SwiftyUI";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		10AA945527277BBA008F022B /* XCRemoteSwiftPackageReference "GzipSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/1024jp/GzipSwift";
@@ -780,6 +796,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		108636CC272C27650002B24B /* SwiftyUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 108636CB272C27650002B24B /* XCRemoteSwiftPackageReference "SwiftyUI" */;
+			productName = SwiftyUI;
+		};
 		10AA945627277BBA008F022B /* Gzip */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 10AA945527277BBA008F022B /* XCRemoteSwiftPackageReference "GzipSwift" */;

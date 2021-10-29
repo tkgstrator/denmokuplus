@@ -20,6 +20,8 @@ final class AppManager: NetworkManager, ObservableObject {
     @Published var progress: Int = 0
     @AppStorage("APP_USER_CDMNO") var cdmNo: String = ""
     @AppStorage("APP_USER_DAMTOMOID") var damtomoId: String = ""
+    @AppStorage("APP_FIRST_LAUNCH") var isFirstLaunch: Bool = true
+    @AppStorage("APP_DEVIDE_QR") var qrcode: String = ""
     
     override init() {
         do {
@@ -72,6 +74,7 @@ final class AppManager: NetworkManager, ObservableObject {
                         
                         subtract
                             .receive(on: DispatchQueue.main, options: nil)
+                            .delay(for: 1, scheduler: RunLoop.main)
                             .flatMap(maxPublishers: .max(1), { NetworkManager.publish(Song(requestNo: $0)) })
                             .sink(receiveValue: { response in
                                 switch response.result {

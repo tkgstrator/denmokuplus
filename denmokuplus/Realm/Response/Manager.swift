@@ -15,6 +15,15 @@ class NetworkManager {
     static var task = Set<AnyCancellable>()
     let queue: DispatchSemaphore = DispatchSemaphore(value: 1)
     
+    static let configuration: URLSessionConfiguration = {
+        let configuration: URLSessionConfiguration = URLSessionConfiguration.default
+        configuration.httpMaximumConnectionsPerHost = 1
+        configuration.timeoutIntervalForRequest = 30
+        return configuration
+    }()
+    
+    static let manager: Session = Session(configuration: configuration)
+    
     static let decoder: JSONDecoder = {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
@@ -22,7 +31,7 @@ class NetworkManager {
     }()
     
     static func publish<T: RequestType>(_ request: T) -> DataResponsePublisher<T.ResponseType> where T.ResponseType: Decodable {
-        AF.request(request)
+        manager.request(request)
             .validate(statusCode: 200 ... 200)
             .validate(contentType: ["application/json"])
             .cURLDescription { request in
