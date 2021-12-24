@@ -11,6 +11,9 @@ import RealmSwift
 import SwiftUI
 import Gzip
 import SwiftyJSON
+import Combine
+import simd
+import zlib
 
 final class AppManager: NetworkManager, ObservableObject {
     private let realm: Realm
@@ -18,6 +21,7 @@ final class AppManager: NetworkManager, ObservableObject {
     @Published var appVersion: String = "0.0.1"
     @Published var releaseDate: String
     @Published var progress: Int = 0
+    @Published var maxValue: Int = 0
     @AppStorage("APP_USER_CDMNO") var cdmNo: String = ""
     @AppStorage("APP_USER_DAMTOMOID") var damtomoId: String = ""
     @AppStorage("APP_FIRST_LAUNCH") var isFirstLaunch: Bool = true
@@ -59,7 +63,7 @@ final class AppManager: NetworkManager, ObservableObject {
         }
     }
     
-    public func loadFromServer() {
+    public func loadFromServer(completion: @escaping (Result<Bool, Error>) -> ()) {
         DispatchQueue(label: "RealmManager").async {
             guard let realm = try? Realm() else { return }
             let requestIds: Set<String> = Set(realm.objects(RealmRequest.self).map({ $0.requestNo }))
@@ -67,32 +71,35 @@ final class AppManager: NetworkManager, ObservableObject {
             NetworkManager.publish(request)
                 .sink(receiveValue: { response in
                     switch response.result {
-                    case .success(let value):
-                        let results: Set<String> = Set(value.searchResult.map({ "\($0.reqNo.prefix(4))-\($0.reqNo.suffix(2))" }))
-                        print(requestIds.count, results.count)
-                        let subtract = Array(results.subtracting(requestIds).sorted()).publisher
-                        
-                        subtract
-                            .receive(on: DispatchQueue.main, options: nil)
-                            .delay(for: 1, scheduler: RunLoop.main)
-                            .flatMap(maxPublishers: .max(1), { NetworkManager.publish(Song(requestNo: $0)) })
-                            .sink(receiveValue: { response in
-                                switch response.result {
-                                case .success(let value):
-                                    print(value)
-                                case .failure(let error):
-                                    print(error)
-                                }
-                            })
-                                    .store(in: &NetworkManager.task)
-                    case .failure(let error):
-                        print(error)
+                        case .success(let value):
+                            let results: Set<String> = Set(value.searchResult.map({ "\($0.reqNo.prefix(4))-\($0.reqNo.suffix(2))" }))
+                            let subtract = Array(results.subtracting(requestIds)).sorted()
+                            
+                            subtract
+                                .publisher
+                                .receive(on: DispatchQueue.main, options: nil)
+                                .delay(for: 1, scheduler: RunLoop.main)
+                                .flatMap(maxPublishers: .max(1), { NetworkManager.publish(Song(requestNo: $0)) })
+                                .sink(receiveCompletion: { _ in
+                                    completion(.success(true))
+                                }, receiveValue: { response in
+                                    switch response.result {
+                                        case .success(let value):
+                                            self.save(RealmRequest(from: value))
+                                        case .failure(let error):
+                                            print(error)
+                                    }
+                                })
+                                .store(in: &NetworkManager.task)
+                        case .failure(let error):
+                            print(error)
                     }
-                }).store(in: &NetworkManager.task)
+                })
+                .store(in: &NetworkManager.task)
         }
     }
     
-    public func load() {
+    public func loadFromDatabase(completion: @escaping (Result<Bool, Error>) -> ()) {
         DispatchQueue(label: "RealmManager").async {
             guard let realm = try? Realm() else { return }
             guard let url: URL = Bundle.main.url(forResource: "database", withExtension: "gz") else { return }
@@ -123,8 +130,9 @@ final class AppManager: NetworkManager, ObservableObject {
                         }
                     }
                 }
+                completion(.success(true))
             } catch {
-                print(error)
+                completion(.failure(error))
             }
         }
     }

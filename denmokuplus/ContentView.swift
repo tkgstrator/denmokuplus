@@ -9,7 +9,9 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var appManager: AppManager
     @State var selection: Int = 0
+    
     var body: some View {
         TabView(selection: $selection, content: {
             HomeView()
@@ -28,6 +30,9 @@ struct ContentView: View {
                 })
                 .tag(2)
         })
+            .fullScreenCover(isPresented: $appManager.isFirstLaunch, onDismiss: {}, content: {
+                ImportView()
+            })
     }
 }
 

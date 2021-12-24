@@ -50,6 +50,33 @@ final class RealmRequest: Object {
     @Persisted var originalKey: Int8 = 0
     /// 配信日
     @Persisted var releaseDate: String = "1970-01-01"
+   
+    convenience init(from request: Song.Online) {
+        self.init()
+        let data = request.data
+        self.requestNo = data.requestNo
+        self.artistCode = data.artistCode
+        self.artist = data.artist
+        self.title = data.title
+        self.titleYomiKana = data.titleYomiKana
+        self.firstLine = data.firstLine
+        let musicInfoList: Song.Online.ResultList.ModelMusicInfoList = request.list.first!.kModelMusicInfoList.first!
+        self.kidsFlag = musicInfoList.kidsFlag
+        self.damTomoPublicVocalFlag = musicInfoList.damTomoPublicVocalFlag
+        self.damTomoPublicMovieFlag = musicInfoList.damTomoPublicMovieFlag
+        self.damTomoPublicRecordingFlag = musicInfoList.damTomoPublicRecordingFlag
+        self.karaokeDamFlag = musicInfoList.karaokeDamFlag
+        self.playbackTime = musicInfoList.playbackTime
+        let eachModelMusicInfoList: Song.Online.ResultList.ModelMusicInfoList.MusicInfo = musicInfoList.eachModelMusicInfoList.filter({ $0.karaokeModelNum == 56 }).first!
+        self.songType = getSongType(eachModelMusicInfoList)
+        self.damTomoMovieFlag = eachModelMusicInfoList.damTomoMovieFlag
+        self.damTomoRecordingFlag = eachModelMusicInfoList.damTomoRecordingFlag
+        self.myListFlag = eachModelMusicInfoList.myListFlag
+        self.scoreFlag = eachModelMusicInfoList.scoreFlag
+        self.guideVocalFlag = eachModelMusicInfoList.guideVocalFlag
+        self.originalKey = eachModelMusicInfoList.shift
+        self.releaseDate = eachModelMusicInfoList.releaseDate
+    }
     
     convenience init(from request: Song.Local) {
         self.init()
@@ -76,6 +103,41 @@ final class RealmRequest: Object {
         self.releaseDate = musicInfoList.releaseDate
     }
 
+    private func getSongType(_ request: Song.Online.ResultList.ModelMusicInfoList.MusicInfo) -> SongType {
+        if request.prookeFlag {
+            return .prooke
+        }
+        
+        if request.animeFlag {
+            return .anime
+        }
+        
+        if request.duetFlag {
+            return .duet
+        }
+        
+        if request.duetDxFlag {
+            return .duetdx
+        }
+        
+        if request.honninFlag {
+            return .honnin
+        }
+        
+        if request.liveFlag {
+            return .live
+        }
+        
+        if request.mamaotoFlag {
+            return .mamaoto
+        }
+        
+        if request.namaotoFlag {
+            return .namaoto
+        }
+        
+        return .none
+    }
     private func getSongType(_ request: Song.Local.ModelMusicInfo) -> SongType {
         if request.prookeFlag {
             return .prooke

@@ -66,13 +66,6 @@ struct SettingView: View {
                     })
                     Button(action: {
                         presentationMode = .database
-                        appManager.load()
-                    }, label: {
-                        Text("データベースから更新")
-                    })
-                    Button(action: {
-                        presentationMode = .database
-                        appManager.loadFromServer()
                     }, label: {
                         Text("サーバーから更新")
                     })
@@ -109,17 +102,19 @@ struct SettingView: View {
 
 struct LoadingView: View {
     @EnvironmentObject var appManager: AppManager
+    @Environment(\.dismiss) var dismiss
+    @State var maxValue: Int = 0
     
     var body: some View {
         NavigationView(content: {
             GeometryReader(content: { geometry in
-                VStack(spacing: nil, content: {
-                    Text("楽曲情報を読み込んでいます")
+                VStack(spacing: 10, content: {
+                    Text("最新の楽曲情報を読み込んでいます")
                     Text("データの追加には時間がかかります")
                 })
                     .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).minY + 100)
                 Circle()
-                    .trim(from: 0.0, to: CGFloat(appManager.progress) / CGFloat(288341))
+                    .trim(from: 0.0, to: CGFloat(appManager.progress) / CGFloat(appManager.maxValue))
                     .stroke(.blue, lineWidth: 8)
                     .rotationEffect(.degrees(-90))
                     .frame(width: min(120, geometry.size.width * 0.6))
@@ -127,7 +122,18 @@ struct LoadingView: View {
                     .background(Circle().stroke(.red, lineWidth: 8))
                     .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
             })
+                .navigationTitle("サーバ同期中")
         })
+            .onAppear {
+                appManager.loadFromServer(completion: { completion in
+                    switch completion {
+                        case .success:
+                            dismiss()
+                        case .failure(let error):
+                            print(error)
+                    }
+                })
+            }
     }
 }
 
